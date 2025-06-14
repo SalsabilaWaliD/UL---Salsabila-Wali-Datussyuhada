@@ -1,0 +1,39 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import make_blobs
+from sklearn.cluster import Birch
+from time import time
+
+X, y = make_blobs(n_samples=1000, centers=4, cluster_std=1.0, random_state=42)
+
+# Konfigurasi model BIRCH
+birch_no_global = Birch(threshold=1.5, n_clusters=None)
+birch_with_global = Birch(threshold=1.5, n_clusters=4)
+
+# Inisialisasi plot
+fig, axs = plt.subplots(1, 2, figsize=(12, 5))
+fig.suptitle("Clustering with BIRCH (1000 Data Points)")
+
+# --- Model 1: BIRCH tanpa global clustering ---
+start = time()
+birch_no_global.fit(X)
+time1 = time() - start
+labels1 = birch_no_global.labels_
+n_clusters1 = np.unique(labels1).size
+
+axs[0].scatter(X[:, 0], X[:, 1], c=labels1, cmap='viridis', s=25)
+axs[0].set_title(f"BIRCH tanpa global clustering\nClusters: {n_clusters1}, Time: {time1:.2f}s")
+
+# --- Model 2: BIRCH dengan global clustering ---
+start = time()
+birch_with_global.fit(X)
+time2 = time() - start
+labels2 = birch_with_global.labels_
+n_clusters2 = np.unique(labels2).size
+
+axs[1].scatter(X[:, 0], X[:, 1], c=labels2, cmap='viridis', s=25)
+axs[1].set_title(f"BIRCH dengan global clustering\nClusters: {n_clusters2}, Time: {time2:.2f}s")
+
+# Tampilan akhir
+plt.tight_layout()
+plt.show()
